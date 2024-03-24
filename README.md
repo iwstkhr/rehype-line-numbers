@@ -1,5 +1,5 @@
 # rehype-line-numbers
-rehype plugin to add a `line-numbers` class to pre tags containing `language-*` classes
+rehype plugin to add a `line-numbers` class to `pre` tags containing `language-*` classes
 
 ## Installation
 ```sh
