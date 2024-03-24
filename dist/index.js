@@ -1,24 +1,21 @@
-import { fromHtml } from 'hast-util-from-html';
-import { toHtml } from 'hast-util-to-html';
 import { visit } from 'unist-util-visit';
 export default function rehypeLineNumbers({ languages, } = {
     languages: [],
 }) {
     return (tree) => {
-        visit(tree, 'raw', (node) => {
+        visit(tree, 'element', (node, _, parent) => {
             var _a;
-            const pre = fromHtml(node.value, { fragment: true }).children.at(0);
-            if (!isTarget(pre, languages)) {
+            if (node.tagName !== 'code' || !isTarget(node, languages)) {
                 return;
             }
-            pre.properties.className = ((_a = pre.properties.className) !== null && _a !== void 0 ? _a : []).concat(['line-numbers']);
-            node.value = toHtml(pre);
+            const className = ((_a = parent.properties.className) !== null && _a !== void 0 ? _a : []);
+            parent.properties.className = className.concat(['line-numbers']);
         });
     };
 }
-function isTarget(pre, languages) {
+function isTarget(code, languages) {
     var _a;
-    return ((_a = pre.properties.className) !== null && _a !== void 0 ? _a : [])
+    return ((_a = code.properties.className) !== null && _a !== void 0 ? _a : [])
         .filter(language => languages.length === 0 || languages.includes(language.replace('language-', '')))
         .length > 0;
 }

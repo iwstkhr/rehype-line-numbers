@@ -1,6 +1,4 @@
-import type { Element, Literal, Root } from 'hast';
-import { fromHtml } from 'hast-util-from-html';
-import { toHtml } from 'hast-util-to-html';
+import type { Element, Root } from 'hast';
 import { visit } from 'unist-util-visit';
 
 interface Option {
@@ -13,20 +11,18 @@ export default function rehypeLineNumbers({
   languages: [],
 }) {
   return (tree: Root): void => {
-    visit(tree, 'raw', (node: Element & Literal) => {
-      const pre = fromHtml(node.value, { fragment: true }).children.at(0) as unknown as Element;
-      if (!isTarget(pre, languages)) {
+    visit(tree, 'element', (node, _, parent) => {
+      if (node.tagName !== 'code' || !isTarget(node, languages)) {
         return;
       }
-
-      pre.properties.className = (pre.properties.className as string[] ?? []).concat(['line-numbers']);
-      node.value = toHtml(pre);
+      const className = (parent as Element).properties.className as string[] ?? [];
+      (parent as Element).properties.className = className.concat(['line-numbers']);
     });
   };
 }
 
-function isTarget(pre: Element, languages: string[]): boolean {
-  return (pre.properties.className as string[] ?? [])
+function isTarget(code: Element, languages: string[]): boolean {
+  return (code.properties.className as string[] ?? [])
     .filter(language => languages.length === 0 || languages.includes(language.replace('language-', '')))
     .length > 0;
 }
