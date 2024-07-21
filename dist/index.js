@@ -8,7 +8,7 @@ export default function rehypeLineNumbers({ languages, } = {
             if (node.tagName !== 'code' || !isTarget(node, languages)) {
                 return;
             }
-            const className = ((_a = parent.properties.className) !== null && _a !== void 0 ? _a : []);
+            const className = (_a = parent.properties.className) !== null && _a !== void 0 ? _a : [];
             parent.properties.className = className.concat(['line-numbers']);
         });
     };
